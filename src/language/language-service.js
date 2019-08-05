@@ -8,7 +8,7 @@ const LanguageService = {
         'language.name',
         'language.user_id',
         'language.head',
-        'language.total_score',
+        'language.total_score'
       )
       .where('language.user_id', user_id)
       .first()
