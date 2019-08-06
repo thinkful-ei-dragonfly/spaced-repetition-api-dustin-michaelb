@@ -1,7 +1,9 @@
 const express = require('express')
 const LanguageService = require('./language-service')
+const LinkedListService = require('./../linked-list/linked-list-service')
 const { requireAuth } = require('../middleware/jwt-auth')
 
+const jsonBodyParser = express.json()
 const languageRouter = express.Router()
 
 languageRouter
@@ -62,9 +64,23 @@ languageRouter
   })
 
 languageRouter
-  .post('/guess', async (req, res, next) => {
-    // implement me
-    res.send('Umplement me!')
+  .route('/guess')
+  .post( jsonBodyParser, async (req, res, next) => {
+    try {
+      const words = await LanguageService.getLanguageWords(
+        req.app.get('db'),
+        req.language.id,
+      )
+      LinkedListService.populateLinkedList(words)
+      console.log(LinkedListService.linkedList)
+      res.json({
+        language: req.language,
+        words,
+      })
+      next()
+    } catch (error) {
+      next(error)
+    }
   })
 
 module.exports = languageRouter
