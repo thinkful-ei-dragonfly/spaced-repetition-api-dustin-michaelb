@@ -66,13 +66,29 @@ languageRouter
 languageRouter
   .route('/guess')
   .post( jsonBodyParser, async (req, res, next) => {
+    
     try {
+      //Validate req body has guess
+      if(!req.body.guess){
+        return res.status(404).json({error: 'Guess not recieved'})
+      }
       const words = await LanguageService.getLanguageWords(
         req.app.get('db'),
         req.language.id,
       )
       LinkedListService.populateLinkedList(words)
-      LinkedListService.guessCheck(req.body.guess)
+
+      const wordObj = LinkedListService.guessCheck(req.body.guess);
+
+      console.log(wordObj);
+
+      if(wordObj.correct){
+        await LanguageService.updateTotalScore(req.app.get('db'), req.language);
+      } 
+        await LanguageService.updateWord(req.app.get('db'), wordObj.word);
+      
+        //gracias => perro => gato
+        //perro => gato => gracias => ??
       
       res.json({
         language: req.language,

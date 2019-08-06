@@ -40,7 +40,27 @@ const LanguageService = {
       'incorrect_count')
       .where({id})
       .first();
-  }, 
+  },
+  
+  updateWord(db, word){
+    return db
+      .from('word')
+      .where({id: word.id})
+      .update({
+        correct_count: word.correct_count,
+        incorrect_count: word.incorrect_count,
+        memory_value: word.memory_value
+      })
+  },
+
+  updateTotalScore(db, language){
+    return db
+    .from('language')
+    .where({id: language.id})
+    .update({
+      total_score: language.total_score+1,
+    })
+  },
 
 }
 
