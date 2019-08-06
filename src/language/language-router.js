@@ -72,7 +72,8 @@ languageRouter
         req.language.id,
       )
       LinkedListService.populateLinkedList(words)
-      console.log(LinkedListService.linkedList)
+      LinkedListService.guessCheck(req.body.guess)
+      
       res.json({
         language: req.language,
         words,
