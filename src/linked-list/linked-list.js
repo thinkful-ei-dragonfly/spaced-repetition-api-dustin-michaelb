@@ -123,6 +123,18 @@ class LinkedList {
       currNode = currNode.next;
     }
   }
+
+  forEach(cb) {
+    // when we call this method, we would also pass the callback instruction to update in db!
+    let node = this.head; // start by creating a copy of the node at the top of our list
+    const arr = []; // create an empty Array, so we can push each db update to it
+    while (node) {
+      // iterate over all nodes
+      arr.push(cb(node));
+      node = node.next;
+    }
+    return arr; // return an Array with each update callback within
+  }
 }
 
 module.exports = LinkedList;

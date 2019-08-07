@@ -85,15 +85,39 @@ const LanguageService = {
 
   persistLinkedList(db, linkedLanguage) {
 
-      let newWordsArr = [];
-      let currNode = linkedLanguage.head;
-      while(currNode.next){
-        newWordsArr.push(currNode);
-        currNode = currNode.next;
-      }
-      console.log(newWordsArr);
-    return db.transaction(trx =>
+    //   let newWordsArr = [];
+    //   let currNode = linkedLanguage.head;
+    //   while(currNode.next){
+    //     newWordsArr.push(currNode);
+    //     currNode = currNode.next;
+    //   }
+    //   console.log(newWordsArr);
+    // return db.transaction(trx =>
         
+    //   Promise.all([
+    //     db('language')
+    //       .transacting(trx)
+    //       .where('id', linkedLanguage.id)
+    //       .update({
+    //         total_score: linkedLanguage.total_score,
+    //         head: linkedLanguage.head.value.id,
+    //       }),
+        
+    //     newWordsArr.forEach(node =>
+    //       db('word')
+    //         .transacting(trx)
+    //         .where({id: node.value.id})
+    //         .update({
+    //           memory_value: node.value.memory_value,
+    //           correct_count: node.value.correct_count,
+    //           incorrect_count: node.value.incorrect_count,
+    //           next: node.next ? node.next.value.id : null,
+    //         })
+    //     )
+    //   ])
+    // )
+
+    return db.transaction(trx =>
       Promise.all([
         db('language')
           .transacting(trx)
@@ -103,12 +127,10 @@ const LanguageService = {
             head: linkedLanguage.head.value.id,
           }),
 
-          //linkedLanguage = {head: node{next:}, id, total_score, }
-        
-        newWordsArr.forEach(node =>
+        ...linkedLanguage.forEach(node =>
           db('word')
             .transacting(trx)
-            .where({id: node.value.id})
+            .where('id', node.value.id)
             .update({
               memory_value: node.value.memory_value,
               correct_count: node.value.correct_count,
@@ -118,6 +140,7 @@ const LanguageService = {
         )
       ])
     )
+
 
   },
 

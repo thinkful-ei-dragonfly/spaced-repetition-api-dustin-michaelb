@@ -74,10 +74,11 @@ languageRouter.route('/guess').post(jsonBodyParser, async (req, res, next) => {
 
     let ll = LanguageService.populateLinkedList(req.language, words); //return a linked list
     //somewhere in here we aren't updating the list correctly
-
+      ll.display();
     if (req.body.guess === ll.head.value.translation) {
       ll.head.value.memory_value *= 2;
       ll.head.value.correct_count++;
+      ll.total_score = ll.total_score + 1;
     } else {
       ll.head.value.memory_value = 1;
       ll.head.value.incorrect_count++;
@@ -87,7 +88,7 @@ languageRouter.route('/guess').post(jsonBodyParser, async (req, res, next) => {
     const head = ll.head.value;
     ll.head = ll.head.next;
     ll.insertAt(head, memValSave);
-    
+    ll.display();
     await LanguageService.persistLinkedList(req.app.get('db'), ll);
 
     res.json({
