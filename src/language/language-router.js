@@ -65,20 +65,24 @@ languageRouter.route('/guess').post(jsonBodyParser, async (req, res, next) => {
   try {
     //Validate req body has guess
     if (!req.body.guess) {
-      return res.status(404).json({ error: 'Guess not recieved' });
+      return res.status(400).json({ error: `Missing 'guess' in request body` });
     }
     const words = await LanguageService.getLanguageWords(
       req.app.get('db'),
       req.language.id
     );
 
+    const result = {
+      isCorrect: false
+    }
+
     let ll = LanguageService.populateLinkedList(req.language, words); //return a linked list
     //somewhere in here we aren't updating the list correctly
-      ll.display();
     if (req.body.guess === ll.head.value.translation) {
       ll.head.value.memory_value *= 2;
       ll.head.value.correct_count++;
       ll.total_score = ll.total_score + 1;
+      result.isCorrect = true
     } else {
       ll.head.value.memory_value = 1;
       ll.head.value.incorrect_count++;
@@ -88,13 +92,15 @@ languageRouter.route('/guess').post(jsonBodyParser, async (req, res, next) => {
     const head = ll.head.value;
     ll.head = ll.head.next;
     ll.insertAt(head, memValSave);
-    ll.display();
     await LanguageService.persistLinkedList(req.app.get('db'), ll);
 
-    res.json({
-      language: req.language,
-      words
-    });
+    result.answer = head.translation
+    result.nextWord = ll.head.value.original
+    result.totalScore = ll.total_score
+    result.wordCorrectCount = ll.head.value.correct_count
+    result.wordIncorrectCount = ll.head.value.incorrect_count
+
+    res.json(result);
     next();
   } catch (error) {
     next(error);
