@@ -65,6 +65,7 @@ const LanguageService = {
   },
 
   populateLinkedList(language, words) {
+
     let linkedList = new LinkedList();
 
     linkedList.id = language.id;
@@ -90,7 +91,7 @@ const LanguageService = {
         newWordsArr.push(currNode);
         currNode = currNode.next;
       }
-
+      console.log(newWordsArr);
     return db.transaction(trx =>
         
       Promise.all([
@@ -104,17 +105,17 @@ const LanguageService = {
 
           //linkedLanguage = {head: node{next:}, id, total_score, }
         
-        // newWordsArr.forEach(node =>
-        //   db('word')
-        //     .transacting(trx)
-        //     .where('id', node.value.id)
-        //     .update({
-        //       memory_value: node.value.memory_value,
-        //       correct_count: node.value.correct_count,
-        //       incorrect_count: node.value.incorrect_count,
-        //       next: node.next ? node.next.value.id : null,
-        //     })
-        // )
+        newWordsArr.forEach(node =>
+          db('word')
+            .transacting(trx)
+            .where({id: node.value.id})
+            .update({
+              memory_value: node.value.memory_value,
+              correct_count: node.value.correct_count,
+              incorrect_count: node.value.incorrect_count,
+              next: node.next ? node.next.value.id : null,
+            })
+        )
       ])
     )
 

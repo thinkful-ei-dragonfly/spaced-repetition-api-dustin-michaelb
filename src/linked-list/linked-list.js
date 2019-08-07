@@ -72,6 +72,8 @@ class LinkedList {
       }
 
       let newNode = new _Node(item, currNode.next);
+      newNode.value.next = currNode.next.value.id;
+      currNode.value.next = newNode.value.id;
       currNode.next = newNode;
     }
   }
