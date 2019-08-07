@@ -181,8 +181,8 @@ describe('User Endpoints', function () {
             { original: 'perro', translation: 'dog' },
             { original: 'bien', translation: 'good' },
             { original: 'mal', translation: 'bad' },
-            { original: 'grande', translation: 'little' },
-            { original: 'pequeño', translation: 'go' },
+            { original: 'grande', translation: 'big' },
+            { original: 'pequeño', translation: 'little' },
           ]
         }
         return supertest(app)
